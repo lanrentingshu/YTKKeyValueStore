@@ -65,6 +65,8 @@ static NSString *const DELETE_ITEMS_SQL = @"DELETE from %@ where id in ( %@ )";
 
 static NSString *const DELETE_ITEMS_WITH_PREFIX_SQL = @"DELETE from %@ where id like ? ";
 
+static NSString *const UPDATE_TIME_SQL = @"UPDATE %@ SET createdTime = %@";
+
 + (BOOL)checkTableName:(NSString *)tableName {
     if (tableName == nil || tableName.length == 0 || [tableName rangeOfString:@" "].location != NSNotFound) {
         debugLog(@"ERROR, table name: %@ format error.", tableName);
@@ -339,6 +341,23 @@ static NSString *const DELETE_ITEMS_WITH_PREFIX_SQL = @"DELETE from %@ where id 
     }];
     if (!result) {
         debugLog(@"ERROR, failed to delete items by id prefix from table: %@", tableName);
+    }
+}
+
+//清除缓存时，并不直正清除缓存的数据，只是将createTime设置为null值
+- (void)modifyTableDataCrateTimeToClearCache:(NSString *)tableName {
+    if ([YTKKeyValueStore checkTableName:tableName] == NO) {
+        return;
+    }
+    
+    NSString *sql = [NSString stringWithFormat:UPDATE_TIME_SQL,tableName,@"0"];
+
+    __block BOOL result;
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        result = [db executeUpdate:sql];
+    }];
+    if (!result) {
+        debugLog(@"ERROR, failed to update items createTime to 0 Time from table: %@", tableName);
     }
 }
 

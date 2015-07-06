@@ -57,5 +57,7 @@
 
 - (void)deleteObjectsByIdPrefix:(NSString *)objectIdPrefix fromTable:(NSString *)tableName;
 
+//清除缓存时，并不直正清除缓存的数据，只是将createTime设置为null值
+- (void)modifyTableDataCrateTimeToClearCache:(NSString *)tableName;
 
 @end
