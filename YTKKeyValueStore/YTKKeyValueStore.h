@@ -60,4 +60,12 @@
 //清除缓存时，并不直正清除缓存的数据，只是将createTime设置为null值
 - (void)modifyTableDataCrateTimeToClearCache:(NSString *)tableName;
 
+/**
+ *  清除表中指定ID的元素的的创建时间（标记缓存失效）
+ *
+ *  @param Id        缓存的ID
+ *  @param tableName 缓存表
+ */
+- (void)cleanDataCrateTimeWithId:(NSString *)Id andTable:(NSString *)tableName;
+
 @end

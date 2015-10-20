@@ -67,6 +67,8 @@ static NSString *const DELETE_ITEMS_WITH_PREFIX_SQL = @"DELETE from %@ where id 
 
 static NSString *const UPDATE_TIME_SQL = @"UPDATE %@ SET createdTime = %@";
 
+static NSString *const UPDATE_TIME_SQL_WITH_ID = @"UPDATE %@ SET createdTime = %@ where id = ?";
+
 + (BOOL)checkTableName:(NSString *)tableName {
     if (tableName == nil || tableName.length == 0 || [tableName rangeOfString:@" "].location != NSNotFound) {
         debugLog(@"ERROR, table name: %@ format error.", tableName);
@@ -355,6 +357,22 @@ static NSString *const UPDATE_TIME_SQL = @"UPDATE %@ SET createdTime = %@";
     __block BOOL result;
     [_dbQueue inDatabase:^(FMDatabase *db) {
         result = [db executeUpdate:sql];
+    }];
+    if (!result) {
+        debugLog(@"ERROR, failed to update items createTime to 0 Time from table: %@", tableName);
+    }
+}
+
+- (void)cleanDataCrateTimeWithId:(NSString *)Id andTable:(NSString *)tableName {
+    if ([YTKKeyValueStore checkTableName:tableName] == NO) {
+        return;
+    }
+    
+    NSString *sql = [NSString stringWithFormat:UPDATE_TIME_SQL_WITH_ID,tableName,@"0"];
+    
+    __block BOOL result;
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        result = [db executeUpdate:sql, Id];
     }];
     if (!result) {
         debugLog(@"ERROR, failed to update items createTime to 0 Time from table: %@", tableName);
