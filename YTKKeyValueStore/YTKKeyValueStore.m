@@ -158,6 +158,13 @@ static NSString *const UPDATE_TIME_SQL_WITH_ID = @"UPDATE %@ SET createdTime = %
         debugLog(@"ERROR, faild to get json data");
         return;
     }
+    
+    // 如果为nil，则不存储
+    if (!object) {
+        return;
+    }
+
+    
     NSString * jsonString = [[NSString alloc] initWithData:data encoding:(NSUTF8StringEncoding)];
     NSDate * createdTime = [NSDate date];
     NSString * sql = [NSString stringWithFormat:UPDATE_ITEM_SQL, tableName];
