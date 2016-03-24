@@ -152,18 +152,18 @@ static NSString *const UPDATE_TIME_SQL_WITH_ID = @"UPDATE %@ SET createdTime = %
     if ([YTKKeyValueStore checkTableName:tableName] == NO) {
         return;
     }
+    
+    // 如果为nil，则不存储
+    if (!object) {
+        return;
+    }
+    
     NSError * error;
     NSData * data = [NSJSONSerialization dataWithJSONObject:object options:0 error:&error];
     if (error) {
         debugLog(@"ERROR, faild to get json data");
         return;
     }
-    
-    // 如果为nil，则不存储
-    if (!object) {
-        return;
-    }
-
     
     NSString * jsonString = [[NSString alloc] initWithData:data encoding:(NSUTF8StringEncoding)];
     NSDate * createdTime = [NSDate date];
